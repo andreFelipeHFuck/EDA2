@@ -2,8 +2,8 @@
 
 int main(){
     AVL *avl = avl_criar();
-    int n = 3;
-    int v[3] = {10, 20, 30};
+    int n = 8;
+    int v[8] = {583, 245, 731, 123, 389, 684, 893, 278};
     int i = 0;
 
     // do {
@@ -25,10 +25,17 @@ int main(){
 
 
     for (int i = 0; i < n; i++) {
-        printf("%d\n", v[i]);
+        // printf("%d\n", v[i]);
         avl_adicionar(avl, v[i]);
     }
 
-    printf("\n%d\n", avl->raiz->valor);
+    percorrer(avl->raiz);
+
+    avl_remover_no(avl, 245);
+    printf("\n");
+    percorrer(avl->raiz);
+
+    avl = avl_remover(avl);
+
 }
 

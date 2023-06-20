@@ -20,7 +20,8 @@ int altura_no(No_avl *no);
 
 AVL* avl_criar();
 No_avl*  avl_adicionar(AVL *arvore, int valor);
-No_avl*  avl_remover_no(AVL *arvore, int valor);
+void avl_remover_no(AVL *arvore, int valor);
+AVL* avl_remover(AVL *arvore);
 
 void balanceamento(AVL *arvore, No_avl *no);
 No_avl *rsd(AVL *arvore, No_avl *no_avl);

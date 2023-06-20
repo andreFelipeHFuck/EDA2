@@ -92,8 +92,6 @@ No_avl* rse(AVL* arvore, No_avl* no) {
     return direita;
 }
 
-
-
 No_avl* rsd(AVL* arvore, No_avl* no) {
     No_avl* pai = no->pai;
     No_avl* esquerda = no->esquerda;
@@ -187,16 +185,16 @@ void adicionar_no_arvore_n_vazia(AVL *arvore, No_avl *no)
         {
             if (no_aux->direita == NULL && no->valor > no_aux->valor)
             {
-                printf("NO %d ADICIONADO A DIREITA DE %d\n", no->valor, no_aux->valor);
                 no->pai = no_aux;
                 no_aux->direita = no;
+                printf("NO %d ADICIONADO A DIREITA DE %d\n", no->valor, no->pai->valor);
                 break;
             }
             else if (no_aux->esquerda == NULL && no->valor < no_aux->valor)
             {
-                printf("NO %d ADICIONADO A ESQUERDA DE %d\n", no->valor, no_aux->valor);
                 no->pai = no_aux;
                 no_aux->esquerda = no;
+                printf("NO %d ADICIONADO A ESQUERDA DE %d\n", no->valor, no->pai->valor);
                 break;
             }
 
@@ -206,18 +204,18 @@ void adicionar_no_arvore_n_vazia(AVL *arvore, No_avl *no)
 
         if (no->valor < no_aux->valor)
         {
-            if (no_aux->direita == NULL)
+            if (no_aux->direita == NULL && no->valor > no_aux->valor)
             {
-                printf("NO %d ADICIONADO A DIREITA DE %d\n", no->valor, no_aux->valor);
                 no->pai = no_aux;
                 no_aux->direita = no;
+                printf("NO %d ADICIONADO A DIREITA DE %d\n", no->valor, no->pai->valor);
                 break;
             }
-            else if (no_aux->esquerda == NULL)
+            else if (no_aux->esquerda == NULL && no->valor < no_aux->valor)
             {
-                printf("NO %d ADICIONADO A ESQUERDA DE %d\n", no->valor, no_aux->valor);
                 no->pai = no_aux;
                 no_aux->esquerda = no;
+                printf("NO %d ADICIONADO A ESQUERDA DE %d\n", no->valor, no->pai->valor);
                 break;
             }
 
@@ -231,8 +229,8 @@ void percorrer(No_avl *no)
 {
     if (no)
     {
-        percorrer(no->esquerda);
         printf("%d\n", no->valor);
+        percorrer(no->esquerda);
         percorrer(no->direita);
     }
 }
@@ -248,4 +246,122 @@ No_avl *avl_adicionar(AVL *arvore, int valor)
 
     balanceamento(arvore, no);
     return no;
+}
+
+
+No_avl* remover_no_folha(No_avl *no){
+    No_avl *pai = no->pai;
+
+    if(pai == NULL)
+        free(no);
+    else{
+        if(pai->esquerda == no){
+            free(no);
+            pai->esquerda = NULL;
+        }else if(pai->direita == no){
+            free(no);
+            pai->direita = NULL;
+        }
+    }
+
+    return pai;
+}
+
+No_avl* remover_no_1_filho(AVL *arvore, No_avl *no){
+    No_avl *pai = no->pai;
+    
+    if(pai == NULL){
+        if(no->esquerda != NULL){
+            arvore->raiz = no->esquerda;
+            free(no);
+        }else{
+            arvore->raiz = no->direita;
+            free(no);
+        }
+    }else{
+        if(pai->esquerda == no){
+            if(no->esquerda != NULL){
+                pai->esquerda = no->esquerda;
+                no->esquerda->pai = pai;
+                free(no);
+                return pai->esquerda;
+            }else if(no->direita != NULL){
+                pai->esquerda = no->direita;
+                no->direita->pai = pai;
+                free(no);
+                return pai->esquerda;
+            }
+        }else if(pai->direita == no){
+            if(no->esquerda != NULL){
+                pai->direita = no->esquerda;
+                no->esquerda->pai = pai;
+                free(no);
+                return pai->direita;
+            }else if(no->direita != NULL){
+                pai->direita = no->direita;
+                no->direita->pai = pai;
+                free(no);
+                return pai->direita;
+            } 
+        }
+
+    }
+
+}
+
+No_avl* remover_no_2_filhos(No_avl *no, int valor){
+    No_avl *no_aux = no->esquerda;
+    No_avl *pai;
+
+    while (no_aux->direita != NULL)
+        no_aux = no_aux->direita;
+    
+    no->valor = no_aux->valor;
+    no_aux->valor = valor;
+    pai = no_aux->pai;
+
+    remover_no_folha(no_aux);
+}
+
+No_avl* arvore_remover_no(AVL *arvore, No_avl *no, int valor){
+    No_avl *no_aux = no;
+
+    while(no_aux){
+        if(valor == no_aux->valor){
+            if(no_aux->esquerda == NULL && no_aux->direita == NULL)
+                return remover_no_folha(no_aux);
+            else{
+                if(no_aux->esquerda != NULL && no_aux->direita != NULL)
+                   return remover_no_2_filhos(no_aux, valor);
+                else
+                    return remover_no_1_filho(arvore, no_aux);
+            }
+        }else{
+            if(valor < no_aux->valor)
+                no_aux = no_aux->esquerda;
+            else
+                no_aux = no_aux->direita;
+        }
+    }
+}
+
+void avl_remover_no(AVL *arvore, int valor){
+    No_avl *no_aux =  arvore_remover_no(arvore, arvore->raiz, valor);
+    balanceamento(arvore, no_aux);
+}
+
+No_avl* remover_no(No_avl *no){
+    if(no == NULL)
+        return NULL;
+    remover_no(no->esquerda);
+    remover_no(no->direita);
+
+    free(no);
+    return NULL;
+}
+
+AVL* avl_remover(AVL *arvore){
+    remover_no(arvore->raiz);
+    free(arvore);
+    return NULL;
 }
