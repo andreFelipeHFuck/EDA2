@@ -20,7 +20,9 @@ ArvoreB* arvore_B_criar(int ordem){
     ArvoreB *arvore = malloc(sizeof(ArvoreB));
 
     arvore->ordem = ordem;
-    arvore->raiz = criaNo(arvore);
+    arvore->raiz = criar_no(arvore);
+
+    return arvore;
 }
 
 int pesquisa_binaria(No_B *no, int chave){
@@ -29,11 +31,11 @@ int pesquisa_binaria(No_B *no, int chave){
         meio = (inicio + fim) / 2;
         if(no->chaves[meio] == chave)
             return meio;
-    }else if(no->chaves[meio] > chave)
-        fim = meio - 1;
-    else
-        inicio = meio + 1;
-    
+        else if(no->chaves[meio] > chave)
+            fim = meio - 1;
+        else
+            inicio = meio + 1;
+    }
     return inicio;
 }
 
@@ -46,7 +48,7 @@ No_B* localiza_no(ArvoreB *arvore, int chave){
         if(no->filhos[i] == NULL)
             return no;
         else
-            no = no->filhos;
+            no = no->filhos[i];
     }
     return NULL;
 }
@@ -65,7 +67,7 @@ void adiciona_chave_no(No_B *no, No_B *direita, int chave){
     no->total++;
 }
 
-int tranbordo(ArvoreB *arvore, No_B *no){
+int transbordo(ArvoreB *arvore, No_B *no){
     return no->total > arvore->ordem * 2;
 }
 
@@ -91,28 +93,40 @@ No_B* divide_no(ArvoreB *arvore, No_B *no){
     return novo;
 }
 
-void adicionar_chave(ArvoreB *arvore, int chave){
-    No* no = localiza_no(arvore, chave);
-
-    adiciona_chave_recursiva(arvore, no, NULL, chave);
-}
-
-void adicionaChaveRecursivo(ArvoreB* arvore, No_B* no, No_B* novo, int chave) {
-    adicionaChaveNo(no, novo, chave);
+void adicona_chave_recursivo(ArvoreB* arvore, No_B* no, No_B* novo, int chave) {
+    adiciona_chave_no(no, novo, chave);
 
     if (transbordo(arvore, no)) {
         int promovido = no->chaves[arvore->ordem];
-        No_B* novo = divideNo(arvore, no);
+        No_B* novo = divide_no(arvore, no);
 
     if (no->pai == NULL) {
-        No_B* raiz = criaNo(arvore);
+        No_B* raiz = criar_no(arvore);
         raiz->filhos[0] = no;
-        adicionaChaveNo(pai, novo, promovido);
+        adiciona_chave_no(no->pai, novo, promovido);
 
         no->pai = raiz;
         novo->pai = raiz;
         arvore->raiz = raiz;
     } else
-        adicionaChaveRecursivo(arvore, no->pai, novo, promovido);
+        adicona_chave_recursivo(arvore, no->pai, novo, promovido);
+    }
+}
+
+void arvore_B_adicionar(ArvoreB* arvore, int chave){
+    No_B* no = localiza_no(arvore, chave);
+
+    adicona_chave_recursivo(arvore, no, NULL, chave);
+}
+
+void arvore_B_percorre(No_B *no){
+    if(no != NULL){
+        for(int i=0; i < no->total; i++){
+            arvore_B_percorre(no->filhos[i]);
+
+            printf("%d\n", no->chaves[i]);
+        }
+
+        arvore_B_percorre(no->filhos[no->total]);
     }
 }

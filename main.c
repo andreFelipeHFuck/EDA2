@@ -1,41 +1,11 @@
-#include "arvores/avl.h"
+#include "arvores/arvore_b.h"
 
 int main(){
-    AVL *avl = avl_criar();
-    int n = 8;
-    int v[8] = {583, 245, 731, 123, 389, 684, 893, 278};
-    int i = 0;
+    ArvoreB *arvore_b = arvore_B_criar(4);
+    
+    arvore_B_adicionar(arvore_b, 1);
+    arvore_B_adicionar(arvore_b, 2);
 
-    // do {
-    //     v[i] = rand() % (n * 10);
-    //     int tem = 0;
-
-    //     for (int j = 0; j < i; j++) {
-    //         if (v[j] == v[i]) {
-    //             tem = 1;
-    //             break;
-    //         }
-    //     }
-
-    //     if (!tem) {
-    //         i++;
-    //     }
-    // } while (i < n);
-
-
-
-    for (int i = 0; i < n; i++) {
-        // printf("%d\n", v[i]);
-        avl_adicionar(avl, v[i]);
-    }
-
-    percorrer(avl->raiz);
-
-    avl_remover_no(avl, 245);
-    printf("\n");
-    percorrer(avl->raiz);
-
-    avl = avl_remover(avl);
-
+    arvore_B_percorre(arvore_b->raiz);
 }
 
