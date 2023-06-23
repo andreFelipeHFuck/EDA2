@@ -98,16 +98,16 @@ void adicona_chave_recursivo(ArvoreB* arvore, No_B* no, No_B* novo, int chave) {
 
     if (transbordo(arvore, no)) {
         int promovido = no->chaves[arvore->ordem];
-        No_B* novo = divide_no(arvore, no);
+        novo = divide_no(arvore, no);
+    
+        if (no->pai == NULL) {
+            No_B* pai = criar_no(arvore);
+            pai->filhos[0] = no;
+            adiciona_chave_no(pai, novo, promovido);
 
-    if (no->pai == NULL) {
-        No_B* raiz = criar_no(arvore);
-        raiz->filhos[0] = no;
-        adiciona_chave_no(no->pai, novo, promovido);
-
-        no->pai = raiz;
-        novo->pai = raiz;
-        arvore->raiz = raiz;
+            no->pai = pai;
+            novo->pai = pai;
+            arvore->raiz = pai;
     } else
         adicona_chave_recursivo(arvore, no->pai, novo, promovido);
     }
@@ -129,4 +129,28 @@ void arvore_B_percorre(No_B *no){
 
         arvore_B_percorre(no->filhos[no->total]);
     }
+}
+
+// Caso 1
+/*
+A exclusão da chave não viola a propriedade do 
+número mínimo de chaves que um nó deve conter.
+*/
+
+/*
+Predecessor Inorder
+A maior chave no filho esquerdo de um nó é chamada de predecessor inorder.
+*/
+
+/*
+Sucessor inorder
+A menor chave no filho à direita de um nó é chamada de sucessor inorder.
+*/
+
+
+
+int deleta_chave_do_no(No_B *no, int chave){
+    // pesquisar o nó onde existe a chave a ser excluída
+
+
 }
