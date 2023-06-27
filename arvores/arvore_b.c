@@ -39,6 +39,23 @@ int pesquisa_binaria(No_B *no, int chave){
     return inicio;
 }
 
+No_B* localiza_no_chave(ArvoreB *arvore, int chave){
+    No_B *no = arvore->raiz;
+
+    while (no != NULL)
+    {
+        int i = pesquisa_binaria(no, chave);
+
+        if(i < no->total && no->chaves[i] == chave)
+            return no;
+        else
+            no = no->filhos[i];
+    }
+
+    return NULL;
+    
+}
+
 No_B* localiza_no(ArvoreB *arvore, int chave){
     No_B *no = arvore->raiz;
 
@@ -131,26 +148,210 @@ void arvore_B_percorre(No_B *no){
     }
 }
 
-// Caso 1
-/*
-A exclusão da chave não viola a propriedade do 
-número mínimo de chaves que um nó deve conter.
-*/
+int no_folha(No_B *no){
+    int cont = 0;
+    for(int i=0; i<no->total; i++){
+        if(no->filhos[i] == NULL)
+            cont++;
+    }
 
-/*
-Predecessor Inorder
-A maior chave no filho esquerdo de um nó é chamada de predecessor inorder.
-*/
+    return cont == no->total ? 1 : 0;
+}
 
-/*
-Sucessor inorder
-A menor chave no filho à direita de um nó é chamada de sucessor inorder.
-*/
+// /*
+// A exclusão da chave não viola a propriedade do número mínimo 
+// de chaves que um nó deve conter.
+// */
+// void remove_valor(No_B *no, int chave){
+//     int pos = pesquisa_binaria(no, chave);
+//     int i = pos + 1;
+
+//     while (i <= no->total)
+//     {
+//         no->chaves[i - 1] = no->chaves[i];
+//         no->filhos[i - 1] = no->filhos[i];
+//         i++;
+//     }
+
+//     no->total--;
+// }
+
+// void copia_sucessor(No_B *no, int pos){
+//     No_B *no_aux;
+//     no_aux = no->filhos[pos];
+
+//     for (; no_aux->filhos[0] != NULL;)
+//     {
+//         no_aux = no_aux->filhos[0];
+//     }
+//     no->chaves[pos] = no_aux->chaves[1];
+// }
+
+// void deslocar_direita(No_B *no, int pos){
+//     No_B *no_aux = no->filhos[pos];
+//     int j = no_aux->total;
+
+//     while (j > 0){
+//         no_aux->chaves[j + 1] = no_aux->chaves[j];
+//         no_aux->filhos[j + 1] = no_aux->filhos[j];
+//     }
+
+//     no_aux->chaves[1] = no->chaves[pos];
+//     no_aux->filhos[1] = no_aux->filhos[0];
+//     no_aux->total++;
+
+//     no_aux = no->filhos[pos - 1];
+//     no->chaves[pos] = no_aux->chaves[no_aux->total];
+//     no->filhos[pos] = no_aux->filhos[no_aux->total];
+//     no_aux->total--;
+// }
+
+// void deslocar_esquerda(No_B *no, int pos){
+//     int j = 1;
+//     No_B *no_aux = no->filhos[pos - 1];
+
+//     no_aux->total++;
+//     no_aux->chaves[no_aux->total] = no->chaves[pos];
+//     no_aux->filhos[no_aux->total] = no->filhos[pos]->filhos[0];
+
+//     no_aux = no->filhos[pos];
+//     no->chaves[pos] = no_aux->chaves[1];
+//     no_aux->filhos[0] = no_aux->filhos[1];
+//     no_aux->total--;
+
+//     while (j <= no_aux->total)
+//     {
+//         no_aux->chaves[j] = no_aux->chaves[j + 1];
+//         no_aux->filhos[j] = no_aux->filhos[j + 1];
+//         j++;
+//     }
+// }
+
+// void junta_nos(No_B *no, int pos){
+//     int j = 1;
+
+//     No_B *no_aux1 = no->filhos[pos];
+//     No_B *no_aux2 = no->filhos[pos - 1];
+
+//     no_aux2->total++;
+//     no_aux2->chaves[no_aux2->total] = no->chaves[pos];
+//     no_aux2->filhos[no_aux2->total] = no->filhos[0];
+
+//     while (j <= no_aux1->total){
+//         no->chaves[j] = no->chaves[j + 1];
+//         no->filhos[j] = no->filhos[j + 1];
+//         j++;
+//     }
+//     no->total--;
+//     free(no_aux1);
+// }
+
+// void ajustar_nos(ArvoreB *arvore, No_B *no, int pos){
+//     if(!pos){
+//         if(no->filhos[1]->total > arvore->ordem)
+//             deslocar_esquerda(no, 1);
+//         else
+//             junta_nos(no, 1);
+//     }else{
+//         if(no->total != pos){
+//             if(no->filhos[pos - 1]->total > arvore->ordem)
+//                 deslocar_direita(no, pos);
+//             else{
+//                 if(no->filhos[pos + 1]->total > arvore->ordem)
+//                     deslocar_esquerda(no, pos + 1);
+//                 else
+//                     junta_nos(no, pos);
+//             }
+//         }else{
+//             if(no->filhos[pos - 1]->total > arvore->ordem)
+//                 deslocar_direita(no, pos);
+//             else
+//                 junta_nos(no, pos);
+//         }
+//     }
+// }
+
+// int deletar_valor_do_no(ArvoreB *arvore, No_B *no, int chave){
+//     int pos, flag = 0;
+
+//     if(no){
+//         if(chave < no->chaves[1]){
+//             pos = 0;
+//             flag = 0;
+//         }else{
+//             for(pos = no->total; (chave < no->chaves[pos] && pos > 1); pos--);
+
+//             if(chave == no->chaves[pos]){
+//                 flag = 1;
+//             }else{
+//                 flag = 0;
+//             }
+//         }
+
+//         if(flag){
+//             printf("TESTE\n");
+//             if(no->filhos[pos - 1]){
+//                 copia_sucessor(no, pos);
+//                 flag = deletar_valor_do_no(arvore, no->filhos[pos] ,no->chaves[pos]);
+
+//                 if(flag == 0){
+//                     printf("ITEM NAO PRESENTE NA ARVORE-B\n");
+//                 }
+//             }else{
+//                 remove_valor(no, pos);
+//             }
+//         }else{
+//             flag = deletar_valor_do_no(arvore, no->filhos[pos], chave);
+//         }
+
+//         if(no->filhos[pos]){
+//             if(no->filhos[pos]->total < arvore->ordem)
+//                 ajustar_nos(arvore, no, pos);
+//         }
+//     }
+
+//     printf("FLAG %d\n", flag);
+//     return flag;
+// }
+
+// void arvore_B_deletar(ArvoreB *arvore, int chave){
+//     No_B *no = arvore->raiz;
+//     No_B *no_aux;
+
+//     if(!deletar_valor_do_no(arvore, no, chave)){
+//         printf("Não está presente\n");
+//         return;
+//     }else{
+//         if(no->total == 0){
+//             no_aux = no;
+//             no_aux = no->filhos[0];
+//             free(no_aux);
+//         }
+//     }
+//     arvore->raiz = no;
+// }
 
 
+void remove_valor(No_B *no, int chave){
+    int pos = pesquisa_binaria(no, chave);
+    int i = pos + 1;
 
-int deleta_chave_do_no(No_B *no, int chave){
-    // pesquisar o nó onde existe a chave a ser excluída
+    while (i <= no->total)
+    {
+        no->chaves[i - 1] = no->chaves[i];
+        no->filhos[i - 1] = no->filhos[i];
+        i++;
+    }
 
+    no->total--;
+}
 
+void arvore_B_deletar(ArvoreB *arvore, int chave){
+    No_B *no =  localiza_no_chave(arvore, chave);
+
+    if(no == NULL){return;}
+
+    if(no_folha(no)){
+
+    }
 }

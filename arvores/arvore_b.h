@@ -15,4 +15,5 @@ typedef struct arvoreB{
 
 ArvoreB* arvore_B_criar(int ordem);
 void arvore_B_adicionar(ArvoreB* arvore, int chave);
+void arvore_B_deletar(ArvoreB *arvore, int chave);
 void arvore_B_percorre(No_B *no);
