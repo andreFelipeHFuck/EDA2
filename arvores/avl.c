@@ -1,5 +1,7 @@
 #include "avl.h"
 
+int numeroComparacoes = 0;
+
 AVL *avl_criar()
 {
     AVL *arvore = malloc(sizeof(AVL));
@@ -66,6 +68,8 @@ int fb(No_avl* no) {
 }
 
 No_avl* rse(AVL* arvore, No_avl* no) {
+    numeroComparacoes++;
+
     No_avl* pai = no->pai;
     No_avl* direita = no->direita;
 
@@ -93,6 +97,8 @@ No_avl* rse(AVL* arvore, No_avl* no) {
 }
 
 No_avl* rsd(AVL* arvore, No_avl* no) {
+    numeroComparacoes++;
+
     No_avl* pai = no->pai;
     No_avl* esquerda = no->esquerda;
 
@@ -134,20 +140,18 @@ void balanceamento(AVL *arvore, No_avl *no)
     int fator = 0;
     while (no != NULL)
     {
+        numeroComparacoes++;
         fator = fb(no);
-        printf("%d\n", fator);
 
         if (fator > 1)
         {
             // Rotação para a direita
             if (fb(no->esquerda) > 0)
             {
-                printf("RSD(%d)\n", no->valor);
                 rsd(arvore, no); // rotação simples a direita, pois o FB do filho tem sinal igual
             }
             else
             {
-                printf("RDD(%d)\n", no->valor);
                 rdd(arvore, no); // rotação dupla a direita, pois o FB do filho tem sinal diferente
             }
         }
@@ -156,12 +160,10 @@ void balanceamento(AVL *arvore, No_avl *no)
             // rotação para a esquerda
             if (fb(no->direita) < 0)
             {
-                printf("RSE(%d)\n", no->valor);
                 rse(arvore, no); // rotação simples a esquerda, pois o FB do filho tem sinal igual
             }
             else
             {
-                printf("RDE(%d)\n", no->valor);
                 rde(arvore, no); // rotação dupla a esquerda, pois o FB do filho tem sinal diferente
             }
         }
@@ -172,7 +174,6 @@ void balanceamento(AVL *arvore, No_avl *no)
 
 void adicionar_no_arvore_vazia(AVL *arvore, No_avl *no)
 {
-    printf("NO %d ADICIONADO NA RAIZ DA ARVORE(AVL)\n", no->valor);
     arvore->raiz = no;
 }
 
@@ -181,47 +182,43 @@ void adicionar_no_arvore_n_vazia(AVL *arvore, No_avl *no)
     No_avl *no_aux = arvore->raiz;
     while (no_aux)
     {
+        numeroComparacoes++;
         if (no->valor > no_aux->valor)
         {
             if (no_aux->direita == NULL && no->valor > no_aux->valor)
             {
                 no->pai = no_aux;
                 no_aux->direita = no;
-                printf("NO %d ADICIONADO A DIREITA DE %d\n", no->valor, no->pai->valor);
                 break;
             }
             else if (no_aux->esquerda == NULL && no->valor < no_aux->valor)
             {
                 no->pai = no_aux;
                 no_aux->esquerda = no;
-                printf("NO %d ADICIONADO A ESQUERDA DE %d\n", no->valor, no->pai->valor);
                 break;
             }
 
-            printf("PERCORRE A DIREITA\n");
             no_aux = no_aux->direita;
         }
 
-        if (no->valor < no_aux->valor)
+        if (no->valor <= no_aux->valor)
         {
             if (no_aux->direita == NULL && no->valor > no_aux->valor)
             {
                 no->pai = no_aux;
                 no_aux->direita = no;
-                printf("NO %d ADICIONADO A DIREITA DE %d\n", no->valor, no->pai->valor);
                 break;
             }
             else if (no_aux->esquerda == NULL && no->valor < no_aux->valor)
             {
                 no->pai = no_aux;
                 no_aux->esquerda = no;
-                printf("NO %d ADICIONADO A ESQUERDA DE %d\n", no->valor, no->pai->valor);
                 break;
             }
 
-            printf("PERCORRE A ESQUERDA\n");
             no_aux = no_aux->esquerda;
         }
+
     }
 }
 
@@ -313,8 +310,10 @@ No_avl* remover_no_2_filhos(No_avl *no, int valor){
     No_avl *no_aux = no->esquerda;
     No_avl *pai;
 
-    while (no_aux->direita != NULL)
+    while (no_aux->direita != NULL){
+        numeroComparacoes++;
         no_aux = no_aux->direita;
+    }
     
     no->valor = no_aux->valor;
     no_aux->valor = valor;
@@ -327,6 +326,7 @@ No_avl* arvore_remover_no(AVL *arvore, No_avl *no, int valor){
     No_avl *no_aux = no;
 
     while(no_aux){
+        numeroComparacoes++;
         if(valor == no_aux->valor){
             if(no_aux->esquerda == NULL && no_aux->direita == NULL)
                 return remover_no_folha(no_aux);
@@ -337,7 +337,7 @@ No_avl* arvore_remover_no(AVL *arvore, No_avl *no, int valor){
                     return remover_no_1_filho(arvore, no_aux);
             }
         }else{
-            if(valor < no_aux->valor)
+            if(valor <= no_aux->valor)
                 no_aux = no_aux->esquerda;
             else
                 no_aux = no_aux->direita;
@@ -364,4 +364,70 @@ AVL* avl_remover(AVL *arvore){
     remover_no(arvore->raiz);
     free(arvore);
     return NULL;
+}
+
+//Concatena novos dados ao arquivo de texto
+void appendData(char acao, int iteracao, int dado){
+    FILE *f;
+    f = fopen("arvoreAVL.txt", "a");
+    if(acao == 'I') fprintf(f, "I");
+    else fprintf(f, "R");
+    fprintf(f, ":");
+    fprintf(f, "%d", iteracao);
+    fprintf(f, ":");
+    fprintf(f, "%d", dado);
+    fprintf(f, ";");
+    fclose(f);
+}
+
+//Funcao responsavel por executar os textes de complexidade da arvore
+void geraDados(AVL *a, int numeroIteracoes) {
+
+    int vetorDeDados[numeroIteracoes];
+    int mediaComparacoes = 0;
+    srand(time(NULL));
+    //Insere dados aleatorios na arvore e salva no vetor vetorDeDados
+    for(int n = 1; n < numeroIteracoes+1; n++){
+        
+        numeroComparacoes = 0;
+        vetorDeDados[n-1] = rand() % 10000;
+
+        avl_adicionar(a, vetorDeDados[n-1]);
+    
+        appendData('I', n, numeroComparacoes);
+    }
+
+    //buscaEmLargura(a, numeroIteracoes);
+
+    //Deleta os dados da arvore a partir dos valores salvos no vetor previamente
+    for(int n = 1; n < numeroIteracoes + 1; n++){
+        numeroComparacoes = 0;
+
+        avl_remover_no(a, vetorDeDados[n-1]);
+
+        appendData('R', n, numeroComparacoes);
+    }
+    //printf("\n");
+    //buscaEmLargura(a, numeroIteracoes);
+}
+
+
+//Limpa o arquivo txt e inicia o calculo de complexidade
+void initARN(int maxComapacoes) {
+    FILE *p;
+    p = fopen("arvoreRubroNegra.txt", "w");
+    fprintf(p, "");
+    fclose(p);
+
+    AVL* a = avl_criar();
+
+    geraDados(a, maxComapacoes);
+    
+}
+
+int main(){
+    AVL *a = avl_criar();
+
+   geraDados(a, 10000);
+
 }
