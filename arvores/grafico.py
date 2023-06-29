@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
   
 # create data
-arquivoARN = open("/home/lucas/Documentos/EDA2/trabalho-final/EDA2-main/arvores/arvoreRubroNegra.txt", "r")
-arquivoAVL = open("/home/lucas/Documentos/EDA2/trabalho-final/EDA2-main/arvores/arvoreAVL.txt", "r")
+arquivoARN = open("arvoreRubroNegra.txt", "r")
+arquivoAVL = open("arvoreAVL.txt", "r")
 dadosARN = arquivoARN.read()
 dadosAVL = arquivoAVL.read()
 

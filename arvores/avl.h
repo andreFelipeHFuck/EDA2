@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 
-typedef struct no{
+typedef struct no_avl{
     struct no *pai;
     struct no *esquerda;
     struct no *direita;
@@ -10,7 +10,7 @@ typedef struct no{
     int altura;
 }No_avl;
 
-typedef struct arvore{
+typedef struct arvore_avl{
     struct no *raiz;
 }AVL;
 
