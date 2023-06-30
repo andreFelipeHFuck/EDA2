@@ -3,15 +3,15 @@
 #include <time.h>
 
 typedef struct no_avl{
-    struct no *pai;
-    struct no *esquerda;
-    struct no *direita;
+    struct no_avl *pai;
+    struct no_avl *esquerda;
+    struct no_avl *direita;
     int valor;
     int altura;
 }No_avl;
 
 typedef struct arvore_avl{
-    struct no *raiz;
+    struct no_avl *raiz;
 }AVL;
 
 int altura_no(No_avl *no);
@@ -26,6 +26,8 @@ No_avl *rsd(AVL *arvore, No_avl *no_avl);
 No_avl *rse(AVL *arvore, No_avl *no_avl);
 No_avl *rdd(AVL *arvore, No_avl *no_avl);
 No_avl *rde(AVL *arvore, No_avl *no_avl);
+
+void initARN_AVL(int maxComapacoes);
 
 void percorrer(No_avl* no);
 

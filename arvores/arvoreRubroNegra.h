@@ -34,5 +34,5 @@ No *deletarNo(Arvore *arvore, No *no);
 void *deletar(Arvore *arvore, int valor);
 void buscaEmLargura(Arvore *arvore, int valor);
 void appendData(char acao, int iteracao, int dado);
-void geraDados(Arvore *arvore, int maxIteracoes);
-void initARN(int maxIteracoes);
+void geraDados(int numeroIteracoes);
+void initARN_RubroNegra(int maxIteracoes);

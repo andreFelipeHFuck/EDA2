@@ -271,9 +271,11 @@ No_avl* remover_no_1_filho(AVL *arvore, No_avl *no){
         if(no->esquerda != NULL){
             arvore->raiz = no->esquerda;
             free(no);
+            arvore->raiz = NULL;
         }else{
             arvore->raiz = no->direita;
             free(no);
+            arvore->raiz = NULL;
         }
     }else{
         if(pai->esquerda == no){
@@ -281,11 +283,13 @@ No_avl* remover_no_1_filho(AVL *arvore, No_avl *no){
                 pai->esquerda = no->esquerda;
                 no->esquerda->pai = pai;
                 free(no);
+                pai->esquerda = NULL;
                 return pai->esquerda;
             }else if(no->direita != NULL){
                 pai->esquerda = no->direita;
                 no->direita->pai = pai;
                 free(no);
+                pai->esquerda = NULL;
                 return pai->esquerda;
             }
         }else if(pai->direita == no){
@@ -293,11 +297,13 @@ No_avl* remover_no_1_filho(AVL *arvore, No_avl *no){
                 pai->direita = no->esquerda;
                 no->esquerda->pai = pai;
                 free(no);
+                pai->direita = NULL;
                 return pai->direita;
             }else if(no->direita != NULL){
                 pai->direita = no->direita;
                 no->direita->pai = pai;
                 free(no);
+                pai->direita = NULL;
                 return pai->direita;
             } 
         }
@@ -361,7 +367,7 @@ No_avl* remover_no(No_avl *no){
 }
 
 AVL* avl_remover(AVL *arvore){
-    remover_no(arvore->raiz);
+    //remover_no(arvore->raiz);
     free(arvore);
     return NULL;
 }
@@ -369,7 +375,7 @@ AVL* avl_remover(AVL *arvore){
 //Concatena novos dados ao arquivo de texto
 void appendData(char acao, int iteracao, int dado){
     FILE *f;
-    f = fopen("arvoreAVL.txt", "a");
+    f = fopen("../assets/arvoreAVL.txt", "a");
     if(acao == 'I') fprintf(f, "I");
     else fprintf(f, "R");
     fprintf(f, ":");
@@ -381,53 +387,65 @@ void appendData(char acao, int iteracao, int dado){
 }
 
 //Funcao responsavel por executar os textes de complexidade da arvore
-void geraDados(AVL *a, int numeroIteracoes) {
-
+void geraDados(int numeroIteracoes) {
     int vetorDeDados[numeroIteracoes];
-    int mediaComparacoes = 0;
+    int vetorMediaAdicionar[numeroIteracoes];
+    int vetorMediaExcluir[numeroIteracoes];
+
+    for(int i=0; i<numeroIteracoes; i++){
+        vetorDeDados[i] = 0;
+        vetorMediaAdicionar[i] = 0;
+        vetorMediaExcluir[i] = 0;
+    }
+
+    AVL *arvore;
+
     srand(time(NULL));
-    //Insere dados aleatorios na arvore e salva no vetor vetorDeDados
-    for(int n = 1; n < numeroIteracoes+1; n++){
+    for(int i=0; i < 10; i++){
+        arvore = avl_criar();
+
+        for(int n = 1; n < numeroIteracoes+1; n++){
+            
+            numeroComparacoes = 0;
+
+            vetorDeDados[n-1] = rand() % 10000;
+            avl_adicionar(arvore, vetorDeDados[n-1]);
+            vetorMediaAdicionar[n-1] += numeroComparacoes;
         
-        numeroComparacoes = 0;
-        vetorDeDados[n-1] = rand() % 10000;
+        }
 
-        avl_adicionar(a, vetorDeDados[n-1]);
-    
-        appendData('I', n, numeroComparacoes);
+        for(int n = 0; n < numeroIteracoes; n++){
+            numeroComparacoes = 0;
+
+            avl_remover_no(arvore, vetorDeDados[n-1]);
+            vetorMediaExcluir[n-1] += numeroComparacoes;
+        }
+
+        avl_remover(arvore);
     }
 
-    //buscaEmLargura(a, numeroIteracoes);
-
-    //Deleta os dados da arvore a partir dos valores salvos no vetor previamente
-    for(int n = 1; n < numeroIteracoes + 1; n++){
-        numeroComparacoes = 0;
-
-        avl_remover_no(a, vetorDeDados[n-1]);
-
-        appendData('R', n, numeroComparacoes);
+    for(int n=1; n<numeroIteracoes+1; n++){
+        vetorMediaAdicionar[n-1] /= 10;
+        appendData('I', n, vetorMediaAdicionar[n-1]);
     }
-    //printf("\n");
-    //buscaEmLargura(a, numeroIteracoes);
+
+    for(int n=1; n<numeroIteracoes+1; n++){
+        vetorMediaExcluir[n-1] /= 10;
+        appendData('R', n, vetorMediaExcluir[n-1]);
+    }
 }
 
 
-//Limpa o arquivo txt e inicia o calculo de complexidade
-void initARN(int maxComapacoes) {
+void initARN_AVL(int maxComapacoes) {
     FILE *p;
-    p = fopen("arvoreRubroNegra.txt", "w");
+    p = fopen("../assets/arvoreAVL.txt", "w");
     fprintf(p, "");
     fclose(p);
 
-    AVL* a = avl_criar();
-
-    geraDados(a, maxComapacoes);
+    geraDados(maxComapacoes);
     
 }
 
 int main(){
-    AVL *a = avl_criar();
-
-   geraDados(a, 10000);
-
+   initARN_AVL(10000);
 }

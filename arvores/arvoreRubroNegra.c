@@ -300,6 +300,11 @@ void *deletar(Arvore *arvore, int valor){
     balancear(arvore, reposicionado);
 }
 
+Arvore* remover(Arvore *arvore){
+    free(arvore);
+    return NULL;
+}
+
 //Função auxiliar para verificar a integridade da arvore
 void buscaEmLargura(Arvore *arvore, int tamanho) {
     No *raiz = arvore->raiz;
@@ -340,7 +345,7 @@ void buscaEmLargura(Arvore *arvore, int tamanho) {
 //Concatena novos dados ao arquivo de texto
 void appendData(char acao, int iteracao, int dado){
     FILE *f;
-    f = fopen("arvoreRubroNegra.txt", "a");
+    f = fopen("../assets/arvoreRubroNegra.txt", "a");
     if(acao == 'I') fprintf(f, "I");
     else fprintf(f, "R");
     fprintf(f, ":");
@@ -351,69 +356,65 @@ void appendData(char acao, int iteracao, int dado){
     fclose(f);
 }
 
-//Funcao responsavel por executar os textes de complexidade da arvore
-void geraDados(Arvore *a, int numeroIteracoes) {
-
+void geraDados(int numeroIteracoes) {
     int vetorDeDados[numeroIteracoes];
-    int mediaComparacoes = 0;
+    int vetorMediaAdicionar[numeroIteracoes];
+    int vetorMediaExcluir[numeroIteracoes];
+
+    for(int i=0; i<numeroIteracoes; i++){
+      vetorDeDados[i] = 0;
+      vetorMediaAdicionar[i] = 0;
+      vetorMediaExcluir[i] = 0;
+    }
+
+    Arvore* arvore;
+
     srand(time(NULL));
-    
-    //Insere dados aleatorios na arvore e salva no vetor vetorDeDados
-    for(int n = 1; n < numeroIteracoes+1; n++){
-        numeroComparacoes = 0;
-        vetorDeDados[n-1] = rand() % 10000;
+    for(int i=0; i<10; i++){
+        arvore = criar();
 
-        adicionar(a, vetorDeDados[n-1]);
-    
-        appendData('I', n, numeroComparacoes);
+        for(int n = 1; n < numeroIteracoes + 1; n++){
+            numeroComparacoes = 0;
+
+            vetorDeDados[n-1] = rand() % 10000;
+            adicionar(arvore, vetorDeDados[n-1]);
+            vetorMediaAdicionar[n-1] += numeroComparacoes;
+        }
+
+        // for(int n = 1; n < numeroIteracoes + 1; n++){
+        //     numeroComparacoes = 0;
+
+        //     deletar(arvore, vetorDeDados[n-1]);
+        //     vetorMediaExcluir[n-1] += numeroComparacoes;
+        // }
+
+        remover(arvore);
+
     }
 
-    //buscaEmLargura(a, numeroIteracoes);
-
-    //Deleta os dados da arvore a partir dos valores salvos no vetor previamente
-    for(int n = 1; n < numeroIteracoes + 1; n++){
-        numeroComparacoes = 0;
-
-        deletar(a, vetorDeDados[n-1]);
-
-        appendData('R', n, numeroComparacoes);
+    for(int n=1; n<numeroIteracoes+1; n++){
+        vetorMediaAdicionar[n-1] /= 10;
+        appendData('I', n, vetorMediaAdicionar[n-1]);
     }
-    //printf("\n");
-    //buscaEmLargura(a, numeroIteracoes);
+
+    // for(int n=1; n<numeroIteracoes+1; n++){
+    //     vetorMediaExcluir[n-1] /= 10;
+    //     appendData('R', n, vetorMediaExcluir[n-1]);
+    // }
 }
 
 
 //Limpa o arquivo txt e inicia o calculo de complexidade
-void initARN(int maxComapacoes) {
+void initARN_RubroNegra(int maxComapacoes) {
     FILE *p;
-    p = fopen("arvoreRubroNegra.txt", "w");
+    p = fopen("../assets/arvoreRubroNegra.txt", "w");
     fprintf(p, "");
     fclose(p);
 
-    Arvore* a = criar();
-
-    geraDados(a, maxComapacoes);
+    geraDados(maxComapacoes);
     
 }
 
 int main() {
-    // Arvore* a = criar();
-    // adicionar(a,7);
-    // adicionar(a,4);
-    // adicionar(a,9);
-    // adicionar(a,3);
-    // adicionar(a,5);
-    // adicionar(a,8);
-    // adicionar(a,10);
-    // adicionar(a,1);
-    // adicionar(a,15);
-
-    // percorrerProfundidadeInOrder(a, a->raiz,visitar);
-    // deletar(a, 7);
-    // buscaEmLargura(a);
-    // deletar(a, 4);
-    // deletar(a, 7);
-    // printf("\n%d", a->nulo->cor);
-
-    initARN(500);
+   initARN_RubroNegra(10000);
 }
