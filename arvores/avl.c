@@ -55,6 +55,7 @@ int altura(No_avl* no){
 
 int fb(No_avl* no) {
     int esquerda = 0,direita = 0;
+    numeroComparacoes++;
   
     if (no->esquerda != NULL) {
         esquerda = altura_no(no->esquerda) + 1;
@@ -126,11 +127,13 @@ No_avl* rsd(AVL* arvore, No_avl* no) {
 }
 
 No_avl* rde(AVL* arvore, No_avl* no) {
+    numeroComparacoes++;
     no->direita = rsd(arvore, no->direita);
     return rse(arvore, no);
 }
 
 No_avl* rdd(AVL* arvore, No_avl* no) {
+    numeroComparacoes++;
     no->esquerda = rse(arvore, no->esquerda);
     return rsd(arvore, no);
 }
@@ -174,6 +177,7 @@ void balanceamento(AVL *arvore, No_avl *no)
 
 void adicionar_no_arvore_vazia(AVL *arvore, No_avl *no)
 {
+    numeroComparacoes++;
     arvore->raiz = no;
 }
 
