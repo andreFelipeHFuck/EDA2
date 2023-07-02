@@ -388,10 +388,10 @@ void geraDados(Arvore *a, int numeroIteracoes) {
         a->raiz = NULL;
     }
     for(int i = 1; i < numeroIteracoes+1; i++){
-        appendData('I', i, vetorMediasInsert[i]/10);
+        appendData('I', i, vetorMediasInsert[i-1]/10);
     }
     for(int i = 1; i < numeroIteracoes+1; i++){
-        appendData('R', i, vetorMediasRemove[i]/10);
+        appendData('R', i, vetorMediasRemove[i-1]/10);
     }
     
     printf("%d ", a->raiz);
